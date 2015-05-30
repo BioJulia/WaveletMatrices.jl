@@ -2,12 +2,15 @@ module WaveletMatrices
 
 export WaveletMatrix, rank
 
+import Base: endof, length
+
 using IndexableDicts
 import IndexableDicts: rank
 
 immutable WaveletMatrix{B<:AbstractBitVector}
     bits::Vector{B}
     nzeros::Vector{Int}
+    len::Int
 end
 
 function WaveletMatrix(data::Vector{Uint8})
@@ -45,10 +48,13 @@ function WaveletMatrix(data::Vector{Uint8})
         push!(nzeros, nzero)
         copy!(data, data′)
     end
-    WaveletMatrix(bits, nzeros)
+    WaveletMatrix(bits, nzeros, n)
 end
 
 WaveletMatrix(str::ByteString) = WaveletMatrix(copy(str.data))
+
+endof(wm::WaveletMatrix) = wm.len
+length(wm::WaveletMatrix) = wm.len
 
 function rank(a::Uint8, wm::WaveletMatrix, i::Int)
     sp = 0
