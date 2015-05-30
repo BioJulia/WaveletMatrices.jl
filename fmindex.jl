@@ -83,9 +83,11 @@ function main()
         query = chomp(query)
         if query[end] == ';'
             query = chop(query)
+            gc()
             t0 = time_ns()
             n = count_search(text, query)
         else
+            gc()
             t0 = time_ns()
             n = length(countFM(wm, query, cnt))
         end

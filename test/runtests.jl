@@ -1,5 +1,5 @@
 using WaveletMatrices
-using IndexableDicts
+using IndexedBitVectors
 using Base.Test
 using FactCheck
 

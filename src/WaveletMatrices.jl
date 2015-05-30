@@ -4,8 +4,8 @@ export WaveletMatrix, rank
 
 import Base: endof, length
 
-using IndexableDicts
-import IndexableDicts: rank
+using IndexedBitVectors
+import IndexedBitVectors: rank
 
 immutable WaveletMatrix{B<:AbstractBitVector}
     bits::Vector{B}
