@@ -12,7 +12,7 @@ At the current moment, `rank(a::Uint8, wm::WaveletMatrices, i::Int)` is the only
 
 ## Requirements
 
-* [IndexedBitVectors.jl](https://github.com/bicycle1885/IndexedBitVectors.j://github.com/bicycle1885/IndexedBitVectors.jl)
+* [IndexedBitVectors.jl](https://github.com/bicycle1885/IndexedBitVectors.jl)
 
 
 ## Demo
@@ -40,7 +40,7 @@ Start up an iteractive session to search DNA patterns; please wait for a few min
     query>
 
 As you notice, the session reports the number of occurrences of the pattern and the elapsed time to search.
-If you append ';' at the end of a query, the program use the `Base.search` function to search the query:
+If you append ';' at the end of a query, the program uses the `Base.search` function to search the query:
 
     query> ACGTTG;
     'ACGTTG' occurs 875 times (76236 μs).
