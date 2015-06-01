@@ -63,12 +63,21 @@ function count_search(text, query)
     end
 end
 
+function digitsep(value, k = 3)
+    value = string(value)
+    n = length(value)
+    starts = reverse([n:-k:1])
+    groups = [value[max(x-k+1, 1):x] for x in starts]
+    return join(groups, ',')
+end
+
 function main()
     textfile = ARGS[1]
 
     # build a self-indexed text
     info("loading a text")
-    text = replace(readall(textfile), '\n', "")
+    text = uppercase(replace(readall(textfile), '\n', ""))
+    info("text length: $(digitsep(length(text))) characters")
     info("building a BWT")
     t, _ = bwt(text)
     info("counting characters")
