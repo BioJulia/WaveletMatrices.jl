@@ -101,7 +101,7 @@ function main()
             n = length(countFM(wm, query, cnt))
         end
         t1 = time_ns()
-        println("'$query' occurs $n times ($(div(t1 - t0, 1000)) μs).")
+        println("'$query' occurs $(digitsep(n)) times ($(digitsep(div(t1 - t0, 1000))) μs).")
         print("query> ")
         query = readline(STDIN)
     end

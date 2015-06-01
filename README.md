@@ -30,28 +30,29 @@ Start up an iteractive session to search DNA fragments; please wait for a few mi
 
     $ julia fmindex.jl chr22.fa
     INFO: loading a text
+    INFO: text length: 51,304,572 characters
     INFO: building a BWT
     INFO: counting characters
     INFO: building a WaveletMatrix
     query> ACGTTG
-    'ACGTTG' occurs 975 times (9657 μs).
+    'ACGTTG' occurs 1,959 times (9,692 μs).
     query> TATATTATTTAT
-    'TATATTATTTAT' occurs 3 times (44 μs).
+    'TATATTATTTAT' occurs 24 times (48 μs).
     query>
 
 As you notice, the session reports the number of occurrences of the pattern and the elapsed time to search.
 If you append ';' at the end of a query, the program uses the `Base.search` function to search the query:
 
     query> ACGTTG;
-    'ACGTTG' occurs 975 times (72331 μs).
+    'ACGTTG' occurs 1,959 times (130,851 μs).
     query> TATATTATTTAT;
-    'TATATTATTTAT' occurs 3 times (31330 μs).
+    'TATATTATTTAT' occurs 24 times (60,350 μs).
     query>
 
 Since `Base.search` is a linear search and does not use the index, '..;' search runs far slower:
 
     query> AAA
-    'AAA' occurs 415631 times (17 μs).
+    'AAA' occurs 1,016,863 times (16 μs).
     query> AAA;
-    'AAA' occurs 415631 times (75655 μs).
+    'AAA' occurs 1,016,863 times (127,242 μs).
     query>
