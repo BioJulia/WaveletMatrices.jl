@@ -68,7 +68,7 @@ function main()
 
     # build a self-indexed text
     info("loading a text")
-    text = readall(textfile)
+    text = replace(readall(textfile), '\n', "")
     info("building a BWT")
     t, _ = bwt(text)
     info("counting characters")
