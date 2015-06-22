@@ -1,5 +1,5 @@
 using WaveletMatrices
-using IndexedBitVectors
+using IndexableBitVectors
 using Base.Test
 using FactCheck
 
@@ -67,6 +67,22 @@ facts("WaveletMatrix") do
         wm = WaveletMatrix(s)
         for char in 'a':'z', i in 1:length(s)
             @fact rank(char, wm, i) => count(c -> c == char, s[1:i])
+        end
+    end
+
+    context("2-bit encoding") do
+        x = rand(0x00:0x03, 100)
+        wm = WaveletMatrix(x, 2)
+        for a in 0x00:0x03, i in 1:100
+            @fact rank(a, wm, i) => count(a′ -> a′ == a, x[1:i])
+        end
+    end
+
+    context("17-bit encoding") do
+        x = rand(0x00000000:0x00000011, 500)
+        wm = WaveletMatrix(x, 17)
+        for a in 0x00000000:0x00000011, i in 1:500
+            @fact rank(a, wm, i) => count(a′ -> a′ == a, x[1:i])
         end
     end
 

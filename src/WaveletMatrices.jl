@@ -4,26 +4,28 @@ export WaveletMatrix, rank
 
 import Base: endof, length
 
-using IndexedBitVectors
-import IndexedBitVectors: rank
+using IndexableBitVectors
+import IndexableBitVectors: rank
 
-immutable WaveletMatrix{B<:AbstractBitVector}
+immutable WaveletMatrix{B<:AbstractBitVector,N}
     bits::Vector{B}
-    nzeros::Vector{Int}
+    nzeros::NTuple{N,Int}
     len::Int
 end
 
-function WaveletMatrix(data::Vector{Uint8})
-    n = length(data)
-    bits = SuccinctBitVector[]
+function WaveletMatrix{B<:AbstractBitVector,T<:Unsigned}(::Type{B}, data::Vector{T}, N::Int)
+    @assert 1 ≤ N ≤ sizeof(T) * 8
+    len = length(data)
+    bits = B[]
     nzeros = Int[]
     # TODO: efficient construction
-    data′ = Array(Uint8, n)
-    for d in 1:8
+    data = copy(data)
+    data′ = Array(T, len)
+    for d in 1:N
         # scan d-th bit
-        bits′ = SuccinctBitVector()
-        for i in 1:n
-            if bitat(data[i], 8 - d + 1)
+        bits′ = B()
+        for i in 1:len
+            if (data[i] >> (N - d)) & 1 == 1
                 # right
                 push!(bits′, 1)
             else
@@ -31,9 +33,9 @@ function WaveletMatrix(data::Vector{Uint8})
                 push!(bits′, 0)
             end
         end
-        nzero = rank0(bits′, n)
+        nzero = rank0(bits′, len)
         l = r = 1
-        for i in 1:n
+        for i in 1:len
             if bits′[i]
                 # right
                 data′[nzero+r] = data[i]
@@ -48,15 +50,20 @@ function WaveletMatrix(data::Vector{Uint8})
         push!(nzeros, nzero)
         copy!(data, data′)
     end
-    WaveletMatrix(bits, nzeros, n)
+    return WaveletMatrix{CompactBitVector,N}(bits, tuple(nzeros...), len)
 end
 
-WaveletMatrix(str::ByteString) = WaveletMatrix(copy(str.data))
+WaveletMatrix{T}(src::Vector{T}, N::Int=sizeof(T) * 8) = WaveletMatrix(CompactBitVector, src, N)
+WaveletMatrix(str::ByteString) = WaveletMatrix(str.data)
 
-endof(wm::WaveletMatrix) = wm.len
+endof(wm::WaveletMatrix)  = wm.len
 length(wm::WaveletMatrix) = wm.len
 
-function rank(a::Uint8, wm::WaveletMatrix, i::Int)
+function rank{B<:AbstractBitVector,N}(a::Unsigned, wm::WaveletMatrix{B,N}, i::Integer)
+    @assert 0 ≤ i ≤ endof(wm)
+    if i == 0
+        return 0
+    end
     sp = 0
     ep = i
     # scan from the most significant bit to the least significant bit
@@ -64,8 +71,8 @@ function rank(a::Uint8, wm::WaveletMatrix, i::Int)
     #   0b01000101
     #     =======>
     #   d=1 .... 8
-    for d in 1:8
-        bit = bitat(a, 8 - d + 1)
+    for d in 1:N
+        bit = (a >> (N - d)) & 1 == 1
         #@show bit sp:ep
         sp = rank(bit, wm.bits[d], sp)
         ep = rank(bit, wm.bits[d], ep)
@@ -78,10 +85,6 @@ function rank(a::Uint8, wm::WaveletMatrix, i::Int)
     return ep - sp
 end
 
-rank(c::Char, wm::WaveletMatrix, i::Int) = rank(convert(Uint8, c), wm, i)
-
-function bitat(byte::Uint8, i::Int)
-    return ((byte >> (i-1)) & 0x01) == 1
-end
+rank(c::Char, wm::WaveletMatrix, i::Integer) = rank(convert(Uint8, c), wm, i)
 
 end # module
