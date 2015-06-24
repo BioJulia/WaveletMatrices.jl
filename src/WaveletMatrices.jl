@@ -8,7 +8,7 @@ using IndexableBitVectors
 import IndexableBitVectors: rank
 
 immutable WaveletMatrix{B<:AbstractBitVector,N}
-    bits::Vector{B}
+    bits::NTuple{N,B}
     nzeros::NTuple{N,Int}
     len::Int
 end
@@ -50,7 +50,7 @@ function WaveletMatrix{B<:AbstractBitVector,T<:Unsigned}(::Type{B}, data::Vector
         push!(nzeros, nzero)
         copy!(data, data′)
     end
-    return WaveletMatrix{CompactBitVector,N}(bits, tuple(nzeros...), len)
+    return WaveletMatrix{CompactBitVector,N}(tuple(bits...), tuple(nzeros...), len)
 end
 
 WaveletMatrix{T}(src::Vector{T}, N::Int=sizeof(T) * 8) = WaveletMatrix(CompactBitVector, src, N)
