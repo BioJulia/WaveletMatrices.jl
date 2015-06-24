@@ -70,6 +70,17 @@ facts("WaveletMatrix") do
         end
     end
 
+    context("Vector{Uint64}") do
+        x = convert(
+            Vector{Uint64},
+            [1, -1000203023020, 53929202802, 9, 0, typemin(Int64), 2, 2, typemax(Int64), -5, 9]
+        )
+        wm = WaveletMatrix(x)
+        for v in x, i in 1:length(x)
+            @fact rank(v, wm, i) => count(v′ -> v′ == v, x[1:i])
+        end
+    end
+
     context("2-bit encoding") do
         x = rand(0x00:0x03, 100)
         wm = WaveletMatrix(x, 2)
