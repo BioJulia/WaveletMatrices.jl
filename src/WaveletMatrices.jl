@@ -2,7 +2,7 @@ module WaveletMatrices
 
 export WaveletMatrix, rank
 
-import Base: endof, length
+import Base: endof, length, sizeof
 
 using IndexableBitVectors
 import IndexableBitVectors: rank
@@ -58,6 +58,19 @@ WaveletMatrix(str::ByteString) = WaveletMatrix(str.data)
 
 endof(wm::WaveletMatrix)  = wm.len
 length(wm::WaveletMatrix) = wm.len
+
+function sizeof{B,N}(wm::WaveletMatrix{B,N})
+    s = 0
+    # bits
+    for n in 1:N
+        s += sizeof(wm.bits[n])
+    end
+    # nzeros
+    s += N * sizeof(Int)
+    # len
+    s += sizeof(Int)
+    return s
+end
 
 function rank{B<:AbstractBitVector,N}(a::Unsigned, wm::WaveletMatrix{B,N}, i::Integer)
     @assert 0 ≤ i ≤ endof(wm)
