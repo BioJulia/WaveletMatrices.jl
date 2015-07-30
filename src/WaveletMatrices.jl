@@ -73,7 +73,10 @@ function sizeof{n}(wm::WaveletMatrix{n})
 end
 
 function getindex{n}(wm::WaveletMatrix{n}, i::Integer)
-    ret = zero(UInt64)
+    if i < 0 || endof(wm) < i
+        throw(BoundsError(i))
+    end
+    ret = UInt64(0)
     @inbounds for d in 1:n
         bit = wm.bits[d][i]
         if bit
@@ -87,7 +90,9 @@ function getindex{n}(wm::WaveletMatrix{n}, i::Integer)
 end
 
 function rank{n}(a::Unsigned, wm::WaveletMatrix{n}, i::Int)
-    @assert 0 ≤ i ≤ endof(wm)
+    if i < 0 || endof(wm) < i
+        throw(BoundsError(i))
+    end
     if i == 0
         return 0
     end
