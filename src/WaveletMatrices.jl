@@ -72,7 +72,7 @@ function sizeof{B,N}(wm::WaveletMatrix{B,N})
     return s
 end
 
-function rank{B<:AbstractBitVector,N}(a::Unsigned, wm::WaveletMatrix{B,N}, i::Integer)
+function rank{B<:AbstractBitVector,N}(a::Unsigned, wm::WaveletMatrix{B,N}, i::Int)
     @assert 0 ≤ i ≤ endof(wm)
     if i == 0
         return 0
@@ -84,20 +84,19 @@ function rank{B<:AbstractBitVector,N}(a::Unsigned, wm::WaveletMatrix{B,N}, i::In
     #   0b01000101
     #     =======>
     #   d=1 .... 8
-    for d in 1:N
+    @inbounds for d in 1:N
         bit = (a >> (N - d)) & 1 == 1
-        #@show bit sp:ep
         sp = rank(bit, wm.bits[d], sp)
         ep = rank(bit, wm.bits[d], ep)
         if bit
             sp += wm.nzeros[d]
             ep += wm.nzeros[d]
         end
-        #@show sp:ep
     end
     return ep - sp
 end
 
+rank(a::Unsigned, wm::WaveletMatrix, i::Integer) = rank(a, wm, convert(Int, i))
 rank(c::Char, wm::WaveletMatrix, i::Integer) = rank(convert(Uint8, c), wm, i)
 
 end # module
