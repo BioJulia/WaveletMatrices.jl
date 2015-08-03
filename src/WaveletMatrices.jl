@@ -92,8 +92,7 @@ end
 function rank{n}(a::Unsigned, wm::WaveletMatrix{n}, i::Int)
     if i < 0 || endof(wm) < i
         throw(BoundsError(i))
-    end
-    if i == 0
+    elseif i == 0
         return 0
     end
     sp = 0
@@ -116,6 +115,5 @@ function rank{n}(a::Unsigned, wm::WaveletMatrix{n}, i::Int)
 end
 
 rank(a::Unsigned, wm::WaveletMatrix, i::Integer) = rank(a, wm, convert(Int, i))
-rank(c::Char, wm::WaveletMatrix, i::Integer) = rank(convert(Uint8, c), wm, i)
 
 end # module

@@ -76,14 +76,6 @@ facts("WaveletMatrix") do
         @fact rank(0x01, wm, 4) => 4
     end
 
-    #context("ASCIIString") do
-    #    s = "abracadabra"
-    #    wm = WaveletMatrix(s)
-    #    for char in 'a':'z', i in 1:length(s)
-    #        @fact rank(char, wm, i) => count(c -> c == char, s[1:i])
-    #    end
-    #end
-
     context("Vector{Uint64}") do
         x = [
             0x0000000000000001,
