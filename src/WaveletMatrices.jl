@@ -1,6 +1,6 @@
 module WaveletMatrices
 
-export WaveletMatrix, rank
+export WaveletMatrix, getindex, rank, freq
 
 import Base: endof, length, sizeof, getindex
 
@@ -115,5 +115,9 @@ function rank{n}(a::Unsigned, wm::WaveletMatrix{n}, i::Int)
 end
 
 rank(a::Unsigned, wm::WaveletMatrix, i::Integer) = rank(a, wm, convert(Int, i))
+
+function freq(c::Unsigned, wm::WaveletMatrix, i::Integer, j::Integer)
+    return j < i ? 0 : rank(c, wm, j) - rank(c, wm, i - 1)
+end
 
 end # module

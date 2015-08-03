@@ -33,6 +33,15 @@ facts("WaveletMatrix") do
         @fact rank(0x03, wm, 2) => 0
         @fact rank(0x03, wm, 3) => 0
         @fact rank(0x03, wm, 4) => 1
+
+        @fact freq(0x00, wm, 1, 4) --> 1
+        @fact freq(0x00, wm, 2, 4) --> 0
+        @fact freq(0x01, wm, 1, 2) --> 1
+        @fact freq(0x01, wm, 1, 1) --> 0
+        @fact freq(0x02, wm, 4, 2) --> 0
+        @fact freq(0x02, wm, 3, 3) --> 1
+        @fact freq(0x03, wm, 4, 1) --> 0
+        @fact freq(0x03, wm, 4, 4) --> 1
     end
 
     context("unordered") do
@@ -74,6 +83,11 @@ facts("WaveletMatrix") do
         @fact rank(0x01, wm, 2) => 2
         @fact rank(0x01, wm, 3) => 3
         @fact rank(0x01, wm, 4) => 4
+
+        for i in 1:4, j in 1:4
+            @fact freq(0x00, wm, i, j) --> 0
+            @fact freq(0x01, wm, i, j) --> max(0, j - i + 1)
+        end
     end
 
     context("Vector{Uint64}") do
@@ -130,6 +144,12 @@ facts("WaveletMatrix") do
         end
         for byte in 0x00:0xff, i in 1:len
             @fact rank(byte, wm, i) => count(b -> b == byte, bytes[1:i])
+        end
+        for byte in 0x00:0xff
+            @fact freq(byte, wm, len, 1) --> 0
+            @fact freq(byte, wm, 1, len) --> count(b -> b == byte, bytes)
+            i, j = rand(1:len), rand(1:len)
+            @fact freq(byte, wm, i, j) --> count(b -> b == byte, bytes[i:j])
         end
     end
 end
