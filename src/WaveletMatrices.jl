@@ -78,11 +78,12 @@ function getindex{n}(wm::WaveletMatrix{n}, i::Integer)
     end
     ret = UInt64(0)
     @inbounds for d in 1:n
-        bit = wm.bits[d][i]
+        bits = wm.bits[d]
+        bit = bits[i]
         if bit
-            i = wm.nzeros[d] + rank1(wm.bits[d], i)
+            i = wm.nzeros[d] + rank1(bits, i)
         else
-            i = rank0(wm.bits[d], i)
+            i = rank0(bits, i)
         end
         ret |= convert(UInt64, bit) << (n - d)
     end
@@ -95,20 +96,16 @@ function rank{n}(a::Unsigned, wm::WaveletMatrix{n}, i::Int)
     elseif i == 0
         return 0
     end
-    sp = 0
-    ep = i
+    sp, ep = 0, i
     # scan from the most significant bit to the least significant bit
-    # e.g.
-    #   0b01000101
-    #     =======>
-    #   d=1 .... 8
     @inbounds for d in 1:n
         bit = (a >> (n - d)) & 1 == 1
         sp = rank(bit, wm.bits[d], sp)
         ep = rank(bit, wm.bits[d], ep)
         if bit
-            sp += wm.nzeros[d]
-            ep += wm.nzeros[d]
+            nz = wm.nzeros[d]
+            sp += nz
+            ep += nz
         end
     end
     return ep - sp
