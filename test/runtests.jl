@@ -14,6 +14,7 @@ facts("WaveletMatrix") do
         @fact wm[2] --> 0x01
         @fact wm[3] --> 0x02
         @fact wm[4] --> 0x03
+        @fact typeof(wm[4]) --> UInt8
         # 0x00
         @fact rank(0x00, wm, 1) --> 1
         @fact rank(0x00, wm, 2) --> 1
@@ -111,6 +112,7 @@ facts("WaveletMatrix") do
         for i in 1:endof(x)
             @fact wm[i] --> x[i]
         end
+        @fact typeof(wm[1]) --> UInt64
         for v in x, i in 1:length(x)
             @fact rank(v, wm, i) --> count(v′ -> v′ == v, x[1:i])
         end

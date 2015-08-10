@@ -2,33 +2,33 @@ module WaveletMatrices
 
 export WaveletMatrix, getindex, rank, freq
 
-import Base: endof, length, sizeof, getindex
+import Base: endof, length, size, sizeof, getindex
 
 using IndexableBitVectors
 import IndexableBitVectors: rank
 
 include("build.jl")
 
-immutable WaveletMatrix{n,B<:AbstractBitVector}
+immutable WaveletMatrix{n,T<:Unsigned,B<:AbstractBitVector} <: AbstractVector{T}
     bits::NTuple{n,B}
     nzeros::NTuple{n,Int}
-    function WaveletMatrix{T<:Unsigned}(data::Vector{T})
-        @assert n ≥ 1
+    function WaveletMatrix(data::Vector{T})
+        @assert 1 ≤ n ≤ sizeof(T) * 8
         bits, nzeros = build(B, data, n)
         new(bits, nzeros)
     end
 end
 
 function Base.call{n,T<:Unsigned}(::Type{WaveletMatrix{n}}, data::Vector{T})
-    return WaveletMatrix{n,CompactBitVector}(data)
+    return WaveletMatrix{n,T,CompactBitVector}(data)
 end
 
 function Base.call{T<:Unsigned}(::Type{WaveletMatrix}, data::Vector{T}, n::Integer=sizeof(T) * 8)
     return WaveletMatrix{n}(data)
 end
 
-endof(wm::WaveletMatrix)  = length(wm)
 length(wm::WaveletMatrix) = length(wm.bits[1])
+size(wm::WaveletMatrix) = (length(wm),)
 
 function sizeof{n}(wm::WaveletMatrix{n})
     s = 0
@@ -43,11 +43,11 @@ function sizeof{n}(wm::WaveletMatrix{n})
     return s
 end
 
-function getindex{n}(wm::WaveletMatrix{n}, i::Integer)
+function getindex{n,T}(wm::WaveletMatrix{n,T}, i::Integer)
     if i < 0 || endof(wm) < i
         throw(BoundsError(i))
     end
-    ret = UInt64(0)
+    ret = T(0)
     @inbounds for d in 1:n
         bits = wm.bits[d]
         bit = bits[i]
@@ -56,7 +56,7 @@ function getindex{n}(wm::WaveletMatrix{n}, i::Integer)
         else
             i = rank0(bits, i)
         end
-        ret |= convert(UInt64, bit) << (n - d)
+        ret |= convert(T, bit) << (n - d)
     end
     return ret
 end

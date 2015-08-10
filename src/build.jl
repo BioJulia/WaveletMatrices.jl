@@ -1,6 +1,5 @@
 # build an internal structure of the wavelet matrix
-function build{T<:Unsigned,B<:AbstractBitVector}(::Type{B}, data::Vector{T}, n::Int)
-    @assert 1 ≤ n ≤ sizeof(T) * 8
+function build{T,B}(::Type{B}, data::Vector{T}, n::Int)
     len = length(data)
     bits = B[]
     nzeros = Int[]
