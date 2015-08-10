@@ -114,7 +114,7 @@ facts("WaveletMatrix") do
 
     context("2-bit encoding") do
         x = rand(0x00:0x03, 100)
-        wm = WaveletMatrix(x, 2)
+        wm = WaveletMatrix{2}(x)
         for i in 1:endof(x)
             @fact wm[i] --> x[i]
         end
@@ -125,7 +125,7 @@ facts("WaveletMatrix") do
 
     context("17-bit encoding") do
         x = rand(0x00000000:0x00000011, 500)
-        wm = WaveletMatrix(x, 17)
+        wm = WaveletMatrix{17}(x)
         for i in 1:endof(x)
             @fact wm[i] --> x[i]
         end

@@ -7,53 +7,23 @@ import Base: endof, length, sizeof, getindex
 using IndexableBitVectors
 import IndexableBitVectors: rank
 
+include("build.jl")
+
 immutable WaveletMatrix{n,B<:AbstractBitVector}
     bits::NTuple{n,B}
     nzeros::NTuple{n,Int}
     len::Int
 end
 
-function WaveletMatrix{B<:AbstractBitVector,T<:Unsigned}(::Type{B}, data::Vector{T}, n::Int)
-    @assert 1 ≤ n ≤ sizeof(T) * 8
+function Base.call{n,T<:Unsigned}(::Type{WaveletMatrix{n}}, data::Vector{T})
     len = length(data)
-    bits = B[]
-    nzeros = Int[]
-    # TODO: efficient construction
-    data = copy(data)
-    data′ = Array(T, len)
-    for d in 1:n
-        # scan d-th bit
-        bits′ = B()
-        for i in 1:len
-            if (data[i] >> (n - d)) & 1 == 1
-                # right
-                push!(bits′, 1)
-            else
-                # left
-                push!(bits′, 0)
-            end
-        end
-        nzero = rank0(bits′, len)
-        l = r = 1
-        for i in 1:len
-            if bits′[i]
-                # right
-                data′[nzero+r] = data[i]
-                r += 1
-            else
-                # left
-                data′[l] = data[i]
-                l += 1
-            end
-        end
-        push!(bits, bits′)
-        push!(nzeros, nzero)
-        copy!(data, data′)
-    end
-    return WaveletMatrix{n,B}(tuple(bits...), tuple(nzeros...), len)
+    bits, nzeros = build(CompactBitVector, data, n)
+    return WaveletMatrix{n,CompactBitVector}(bits, nzeros, len)
 end
 
-WaveletMatrix{T<:Unsigned}(src::Vector{T}, n::Int=sizeof(T) * 8) = WaveletMatrix(CompactBitVector, src, n)
+function Base.call{T<:Unsigned}(::Type{WaveletMatrix}, data::Vector{T}, n::Integer=sizeof(T) * 8)
+    return WaveletMatrix{n}(data)
+end
 
 endof(wm::WaveletMatrix)  = wm.len
 length(wm::WaveletMatrix) = wm.len
