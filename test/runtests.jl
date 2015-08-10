@@ -8,6 +8,7 @@ srand(12345)
 facts("WaveletMatrix") do
     context("ordered") do
         wm = WaveletMatrix([0x00, 0x01, 0x02, 0x03])
+        @fact length(wm) --> 4
         # getindex
         @fact wm[1] --> 0x00
         @fact wm[2] --> 0x01
@@ -46,6 +47,7 @@ facts("WaveletMatrix") do
 
     context("unordered") do
         wm = WaveletMatrix([0x01, 0x03, 0x02, 0x00])
+        @fact length(wm) --> 4
         # getindex
         @fact wm[1] --> 0x01
         @fact wm[2] --> 0x03
@@ -75,6 +77,7 @@ facts("WaveletMatrix") do
 
     context("homogeneous") do
         wm = WaveletMatrix([0x01, 0x01, 0x01, 0x01])
+        @fact length(wm) --> 4
         # getindex
         for i in 1:4
             @fact wm[i] --> 0x01
@@ -104,6 +107,7 @@ facts("WaveletMatrix") do
             0x0000000000000008,
         ]
         wm = WaveletMatrix(x)
+        @fact length(wm) --> 10
         for i in 1:endof(x)
             @fact wm[i] --> x[i]
         end
@@ -115,6 +119,7 @@ facts("WaveletMatrix") do
     context("2-bit encoding") do
         x = rand(0x00:0x03, 100)
         wm = WaveletMatrix{2}(x)
+        @fact length(wm) --> 100
         for i in 1:endof(x)
             @fact wm[i] --> x[i]
         end
@@ -126,6 +131,7 @@ facts("WaveletMatrix") do
     context("17-bit encoding") do
         x = rand(0x00000000:0x00000011, 500)
         wm = WaveletMatrix{17}(x)
+        @fact length(wm) --> 500
         for i in 1:endof(x)
             @fact wm[i] --> x[i]
         end
