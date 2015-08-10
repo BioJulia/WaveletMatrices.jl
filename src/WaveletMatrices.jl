@@ -54,7 +54,6 @@ function WaveletMatrix{B<:AbstractBitVector,T<:Unsigned}(::Type{B}, data::Vector
 end
 
 WaveletMatrix{T<:Unsigned}(src::Vector{T}, n::Int=sizeof(T) * 8) = WaveletMatrix(CompactBitVector, src, n)
-WaveletMatrix(str::ByteString) = WaveletMatrix(str.data)
 
 endof(wm::WaveletMatrix)  = wm.len
 length(wm::WaveletMatrix) = wm.len
