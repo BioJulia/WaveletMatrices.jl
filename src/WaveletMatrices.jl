@@ -95,13 +95,16 @@ function select(a::Unsigned, wm::WaveletMatrix, j::Int)
     # binary search: j ∈ (rank(l), rank(u)]
     l = 0
     u = length(wm)
-    while j ≤ rank(a, wm, u)
+    rank_u = rank(a, wm, u)
+    while j ≤ rank_u
         m = div(l + u, 2)
         if l == m
             return u
         end
-        if j ≤ rank(a, wm, m)
+        rank_m = rank(a, wm, m)
+        if j ≤ rank_m
             u = m
+            rank_u = rank_m
         else
             l = m
         end
