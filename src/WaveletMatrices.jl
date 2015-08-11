@@ -111,8 +111,8 @@ end
 
 select(a::Unsigned, wm::WaveletMatrix, j::Integer) = select(a, wm, convert(Int, j))
 
-function freq(c::Unsigned, wm::WaveletMatrix, i::Integer, j::Integer)
-    return j < i ? 0 : rank(c, wm, j) - rank(c, wm, i - 1)
+function freq(a::Unsigned, wm::WaveletMatrix, i::Integer, j::Integer)
+    return j < i ? 0 : rank(a, wm, j) - rank(a, wm, i - 1)
 end
 
 end # module
