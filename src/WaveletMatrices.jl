@@ -43,7 +43,7 @@ function sizeof{n}(wm::WaveletMatrix{n})
     return s
 end
 
-@inline function getindex{n,T}(wm::WaveletMatrix{n,T}, i::Integer)
+@inline function getindex{n,T}(wm::WaveletMatrix{n,T}, i::Int)
     if i < 0 || endof(wm) < i
         throw(BoundsError(i))
     end
@@ -62,6 +62,8 @@ end
         end
     end
 end
+
+@inline getindex{n,T}(wm::WaveletMatrix{n,T}, i::Integer) = getindex(wm, convert(Int, i))
 
 function rank{n}(a::Unsigned, wm::WaveletMatrix{n}, i::Int)
     if i < 0 || endof(wm) < i
