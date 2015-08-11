@@ -5,6 +5,21 @@ using FactCheck
 
 srand(12345)
 
+function seq_select(a, vec, j)
+    if j ≤ 0
+        return 0
+    end
+    for i in 1:length(vec)
+        if vec[i] == a
+            j -= 1
+        end
+        if j == 0
+            return i
+        end
+    end
+    return 0
+end
+
 facts("WaveletMatrix") do
     context("ordered") do
         wm = WaveletMatrix([0x00, 0x01, 0x02, 0x03])
@@ -35,6 +50,21 @@ facts("WaveletMatrix") do
         @fact rank(0x03, wm, 2) --> 0
         @fact rank(0x03, wm, 3) --> 0
         @fact rank(0x03, wm, 4) --> 1
+
+        @fact select(0x00, wm, 0) --> 0
+        @fact select(0x01, wm, 0) --> 0
+        @fact select(0x02, wm, 0) --> 0
+        @fact select(0x03, wm, 0) --> 0
+
+        @fact select(0x00, wm, 1) --> 1
+        @fact select(0x01, wm, 1) --> 2
+        @fact select(0x02, wm, 1) --> 3
+        @fact select(0x03, wm, 1) --> 4
+
+        @fact select(0x00, wm, 2) --> 0
+        @fact select(0x01, wm, 2) --> 0
+        @fact select(0x02, wm, 2) --> 0
+        @fact select(0x03, wm, 2) --> 0
 
         @fact freq(0x00, wm, 1, 4) --> 1
         @fact freq(0x00, wm, 2, 4) --> 0
@@ -74,6 +104,16 @@ facts("WaveletMatrix") do
         @fact rank(0x03, wm, 2) --> 1
         @fact rank(0x03, wm, 3) --> 1
         @fact rank(0x03, wm, 4) --> 1
+
+        @fact select(0x00, wm, 1) --> 4
+        @fact select(0x01, wm, 1) --> 1
+        @fact select(0x02, wm, 1) --> 3
+        @fact select(0x03, wm, 1) --> 2
+
+        @fact select(0x00, wm, 2) --> 0
+        @fact select(0x01, wm, 2) --> 0
+        @fact select(0x02, wm, 2) --> 0
+        @fact select(0x03, wm, 2) --> 0
     end
 
     context("homogeneous") do
@@ -87,6 +127,15 @@ facts("WaveletMatrix") do
         @fact rank(0x01, wm, 2) --> 2
         @fact rank(0x01, wm, 3) --> 3
         @fact rank(0x01, wm, 4) --> 4
+
+        @fact select(0x01, wm, 1) --> 1
+        @fact select(0x01, wm, 2) --> 2
+        @fact select(0x01, wm, 3) --> 3
+        @fact select(0x01, wm, 4) --> 4
+        @fact select(0x01, wm, 5) --> 0
+
+        @fact select(0x00, wm, 1) --> 0
+        @fact select(0x02, wm, 1) --> 0
 
         for i in 1:4, j in 1:4
             @fact freq(0x00, wm, i, j) --> 0
@@ -116,6 +165,9 @@ facts("WaveletMatrix") do
         for v in x, i in 1:length(x)
             @fact rank(v, wm, i) --> count(v′ -> v′ == v, x[1:i])
         end
+        for v in x, j in 1:length(x)+1
+            @fact select(v, wm, j) --> seq_select(v, x, j)
+        end
     end
 
     context("2-bit encoding") do
@@ -127,6 +179,9 @@ facts("WaveletMatrix") do
         end
         for a in 0x00:0x03, i in 1:100
             @fact rank(a, wm, i) --> count(a′ -> a′ == a, x[1:i])
+        end
+        for a in 0x00:0x03, j in 1:100+1
+            @fact select(a, wm, j) --> seq_select(a, x, j)
         end
     end
 
@@ -140,6 +195,9 @@ facts("WaveletMatrix") do
         for a in 0x00000000:0x00000011, i in 1:500
             @fact rank(a, wm, i) --> count(a′ -> a′ == a, x[1:i])
         end
+        for a in 0x00000000:0x00000011, j in 1:500+1
+            @fact select(a, wm, j) --> seq_select(a, x, j)
+        end
     end
 
     context("random") do
@@ -152,6 +210,9 @@ facts("WaveletMatrix") do
         end
         for byte in 0x00:0xff, i in 1:len
             @fact rank(byte, wm, i) --> count(b -> b == byte, bytes[1:i])
+        end
+        for byte in 0x00:0xff, j in 0:len+1
+            @fact select(byte, wm, j) --> seq_select(byte, bytes, j)
         end
         for byte in 0x00:0xff
             @fact freq(byte, wm, len, 1) --> 0

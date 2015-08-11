@@ -1,8 +1,8 @@
 module WaveletMatrices
 
-export WaveletMatrix, getindex, rank, freq
+export WaveletMatrix, getindex, rank, select, freq
 
-import Base: endof, length, size, sizeof, getindex
+import Base: endof, length, size, sizeof, getindex, select
 
 using IndexableBitVectors
 import IndexableBitVectors: rank
@@ -87,6 +87,29 @@ function rank{n}(a::Unsigned, wm::WaveletMatrix{n}, i::Int)
 end
 
 rank(a::Unsigned, wm::WaveletMatrix, i::Integer) = rank(a, wm, convert(Int, i))
+
+function select(a::Unsigned, wm::WaveletMatrix, j::Int)
+    if j ≤ 0
+        return 0
+    end
+    # binary search: j ∈ (rank(l), rank(u)]
+    l = 0
+    u = length(wm)
+    while j ≤ rank(a, wm, u)
+        m = div(l + u, 2)
+        if l == m
+            return u
+        end
+        if j ≤ rank(a, wm, m)
+            u = m
+        else
+            l = m
+        end
+    end
+    return 0
+end
+
+select(a::Unsigned, wm::WaveletMatrix, j::Integer) = select(a, wm, convert(Int, j))
 
 function freq(c::Unsigned, wm::WaveletMatrix, i::Integer, j::Integer)
     return j < i ? 0 : rank(c, wm, j) - rank(c, wm, i - 1)
