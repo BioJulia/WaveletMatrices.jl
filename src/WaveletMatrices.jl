@@ -51,14 +51,16 @@ function getindex{n,T}(wm::WaveletMatrix{n,T}, i::Integer)
     @inbounds for d in 1:n
         bits = wm.bits[d]
         bit = bits[i]
+        ret = ret << 1 | bit
+        if d == n
+            return ret
+        end
         if bit
             i = wm.nzeros[d] + rank1(bits, i)
         else
             i = rank0(bits, i)
         end
-        ret |= convert(T, bit) << (n - d)
     end
-    return ret
 end
 
 function rank{n}(a::Unsigned, wm::WaveletMatrix{n}, i::Int)
