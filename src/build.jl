@@ -37,3 +37,17 @@ function build{T,B}(::Type{B}, data::Vector{T}, n::Int)
     end
     return tuple(bits...), tuple(nzeros...)
 end
+
+# starting points for the rank operation can be precomputed
+function locate_sp(a, bits, nzeros)
+    n = length(bits)
+    sp = 0
+    for d in 1:n
+        bit = (a >> (n - d)) & 1 == 1
+        sp = rank(bit, bits[d], sp)
+        if bit
+            sp += nzeros[d]
+        end
+    end
+    return sp
+end

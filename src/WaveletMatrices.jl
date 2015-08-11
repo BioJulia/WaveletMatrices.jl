@@ -12,10 +12,21 @@ include("build.jl")
 immutable WaveletMatrix{n,T<:Unsigned,B<:AbstractBitVector} <: AbstractVector{T}
     bits::NTuple{n,B}
     nzeros::NTuple{n,Int}
+    sps::Vector{Int}
     function WaveletMatrix(data::Vector{T})
         @assert 1 ≤ n ≤ sizeof(T) * 8
         bits, nzeros = build(B, data, n)
-        new(bits, nzeros)
+        if n ≤ 16
+            # size of lookup table ≤ 512KiB (= sizeof(Int) * 2^16)
+            alphabetsize = 2^n
+            sps = Vector{Int}(alphabetsize)
+            for a in 0:alphabetsize-1
+                sps[a+1] = locate_sp(T(a), bits, nzeros)
+            end
+        else
+            sps = Int[]
+        end
+        new(bits, nzeros, sps)
     end
 end
 
@@ -71,16 +82,29 @@ function rank{n}(a::Unsigned, wm::WaveletMatrix{n}, i::Int)
     elseif i == 0
         return 0
     end
-    sp, ep = 0, i
-    # scan from the most significant bit to the least significant bit
-    @inbounds for d in 1:n
-        bit = (a >> (n - d)) & 1 == 1
-        sp = rank(bit, wm.bits[d], sp)
-        ep = rank(bit, wm.bits[d], ep)
-        if bit
-            nz = wm.nzeros[d]
-            sp += nz
-            ep += nz
+    if !isempty(wm.sps)
+        # use precomputed sp
+        sp = wm.sps[a+1]
+        ep = i
+        @inbounds for d in 1:n
+            bit = (a >> (n - d)) & 1 == 1
+            ep = rank(bit, wm.bits[d], ep)
+            if bit
+                ep += wm.nzeros[d]
+            end
+        end
+    else
+        sp, ep = 0, i
+        # scan from the most significant bit to the least significant bit
+        @inbounds for d in 1:n
+            bit = (a >> (n - d)) & 1 == 1
+            sp = rank(bit, wm.bits[d], sp)
+            ep = rank(bit, wm.bits[d], ep)
+            if bit
+                nz = wm.nzeros[d]
+                sp += nz
+                ep += nz
+            end
         end
     end
     return ep - sp
