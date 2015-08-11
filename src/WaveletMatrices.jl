@@ -43,14 +43,11 @@ size(wm::WaveletMatrix) = (length(wm),)
 
 function sizeof{n}(wm::WaveletMatrix{n})
     s = 0
-    # bits
     for d in 1:n
         s += sizeof(wm.bits[d])
     end
-    # nzeros
-    s += n * sizeof(Int)
-    # len
-    s += sizeof(Int)
+    s += sizeof(wm.nzeros)
+    s += sizeof(wm.sps)
     return s
 end
 
