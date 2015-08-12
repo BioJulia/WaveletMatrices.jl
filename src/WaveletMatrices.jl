@@ -13,9 +13,12 @@ immutable WaveletMatrix{n,T<:Unsigned,B<:AbstractBitVector} <: AbstractVector{T}
     bits::NTuple{n,B}
     nzeros::NTuple{n,Int}
     sps::Vector{Int}
-    function WaveletMatrix(data::Vector{T})
+    function WaveletMatrix(bits)
         @assert 1 ≤ n ≤ sizeof(T) * 8
-        bits, nzeros = build(B, data, n)
+        nzeros = Int[]
+        for bv in bits
+            push!(nzeros, rank0(bv, length(bv)))
+        end
         if n ≤ 16
             # size of lookup table ≤ 512KiB (= sizeof(Int) * 2^16)
             alphabetsize = 2^n
@@ -26,16 +29,18 @@ immutable WaveletMatrix{n,T<:Unsigned,B<:AbstractBitVector} <: AbstractVector{T}
         else
             sps = Int[]
         end
-        new(bits, nzeros, sps)
+        return new(tuple(bits...), tuple(nzeros...), sps)
     end
 end
 
-function Base.call{n,T<:Unsigned}(::Type{WaveletMatrix{n}}, data::Vector{T})
-    return WaveletMatrix{n,T,CompactBitVector}(data)
+function Base.call{n,T<:Unsigned}(::Type{WaveletMatrix{n}}, data::AbstractVector{T})
+    bits = build(CompactBitVector, data, n)
+    return WaveletMatrix{n,T,CompactBitVector}(bits)
 end
 
-function Base.call{T<:Unsigned}(::Type{WaveletMatrix}, data::Vector{T}, n::Integer=sizeof(T) * 8)
-    return WaveletMatrix{n}(data)
+function Base.call{T<:Unsigned}(::Type{WaveletMatrix}, data::AbstractVector{T}, n::Integer=sizeof(T) * 8)
+    bits = build(CompactBitVector, data, n)
+    return WaveletMatrix{n,T,CompactBitVector}(bits)
 end
 
 length(wm::WaveletMatrix) = length(wm.bits[1])

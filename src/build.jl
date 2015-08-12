@@ -1,5 +1,5 @@
 # build an internal structure of the wavelet matrix
-function build{T,B}(::Type{B}, data::Vector{T}, n::Int)
+function build{T,B}(::Type{B}, data::AbstractVector{T}, n::Int)
     len = length(data)
     bits = B[]
     nzeros = Int[]
@@ -35,7 +35,7 @@ function build{T,B}(::Type{B}, data::Vector{T}, n::Int)
         push!(nzeros, nzero)
         copy!(data, data′)
     end
-    return tuple(bits...), tuple(nzeros...)
+    return tuple(bits...)
 end
 
 # starting points for the rank operation can be precomputed
