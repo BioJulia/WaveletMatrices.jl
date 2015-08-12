@@ -1,16 +1,15 @@
+using IntArrays
+
 # build an internal structure of the wavelet matrix
-function build{T,B}(::Type{B}, data::AbstractVector{T}, n::Int)
+function build{T<:Unsigned,B}(::Type{B}, data::AbstractVector{T}, n::Int)
     len = length(data)
     bits = B[]
-    nzeros = Int[]
-    # TODO: efficient construction
-    data = copy(data)
-    data′ = Array(T, len)
+    ivec = IntVector{n}(data)
     for d in 1:n
         # scan d-th bit
         bits′ = B()
         for i in 1:len
-            if (data[i] >> (n - d)) & 1 == 1
+            if (ivec[i] >> (n - d)) & 1 == 1
                 # right
                 push!(bits′, 1)
             else
@@ -20,20 +19,20 @@ function build{T,B}(::Type{B}, data::AbstractVector{T}, n::Int)
         end
         nzero = rank0(bits′, len)
         l = r = 1
+        ivec′ = similar(ivec)
         for i in 1:len
             if bits′[i]
                 # right
-                data′[nzero+r] = data[i]
+                ivec′[nzero+r] = ivec[i]
                 r += 1
             else
                 # left
-                data′[l] = data[i]
+                ivec′[l] = ivec[i]
                 l += 1
             end
         end
         push!(bits, bits′)
-        push!(nzeros, nzero)
-        copy!(data, data′)
+        ivec = ivec′
     end
     return tuple(bits...)
 end
