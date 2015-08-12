@@ -15,8 +15,10 @@ immutable WaveletMatrix{n,T<:Unsigned,B<:AbstractBitVector} <: AbstractVector{T}
     sps::Vector{Int}
     function WaveletMatrix(bits)
         @assert 1 ≤ n ≤ sizeof(T) * 8
+        @assert length(bits) == n
         nzeros = Int[]
         for bv in bits
+            @assert length(bits[1]) == length(bv)
             push!(nzeros, rank0(bv, length(bv)))
         end
         if n ≤ 16

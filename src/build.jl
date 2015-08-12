@@ -7,31 +7,29 @@ function build{T<:Unsigned,B}(::Type{B}, data::AbstractVector{T}, n::Int)
     ivec = IntVector{n}(data)
     for d in 1:n
         # scan d-th bit
-        bits′ = B()
+        bv = BitVector(len)
+        nzeros = 0
         for i in 1:len
             if (ivec[i] >> (n - d)) & 1 == 1
-                # right
-                push!(bits′, 1)
+                bv[i] = true  # right
             else
-                # left
-                push!(bits′, 0)
+                bv[i] = false # left
+                nzeros += 1
             end
         end
-        nzero = rank0(bits′, len)
-        l = r = 1
+        # stably sort integers by bv
         ivec′ = similar(ivec)
+        r = nzeros
+        l = 0
         for i in 1:len
-            if bits′[i]
-                # right
-                ivec′[nzero+r] = ivec[i]
-                r += 1
+            if bv[i]
+                ivec′[r+=1] = ivec[i]
             else
-                # left
-                ivec′[l] = ivec[i]
-                l += 1
+                ivec′[l+=1] = ivec[i]
             end
         end
-        push!(bits, bits′)
+        # store the bit vector and go next
+        push!(bits, B(bv))
         ivec = ivec′
     end
     return tuple(bits...)
