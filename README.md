@@ -13,10 +13,10 @@ The `WaveletMatrix` type is defined as follows:
 immutable WaveletMatrix{n,T<:Unsigned,B<:AbstractBitVector} <: AbstractVector{T}
 ```
 
-, where
+where
 
-* `n`: the number of bits required to encode the unsigned integers (elements).
-* `T`: the type of elements.
+* `n`: the number of bits required to encode the unsigned integers (elements)
+* `T`: the type of elements
 * `B`: the type of bit vectors used to store elements.
 
 To efficiently pack a sequence of unsigned integers, `n` should be as small as possible but enough to encode those integers.
@@ -44,3 +44,4 @@ select(0x01, wm, 9876)
 ## Requirements
 
 * [IndexableBitVectors.jl](https://github.com/bicycle1885/IndexableBitVectors.jl)
+* [IntArrays.jl](https://github.com/bicycle1885/IntArrays.jl)
