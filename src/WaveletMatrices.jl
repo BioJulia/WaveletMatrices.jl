@@ -14,7 +14,7 @@ immutable WaveletMatrix{n,T<:Unsigned,B<:AbstractBitVector} <: AbstractVector{T}
     nzeros::NTuple{n,Int}
     sps::Vector{Int}
     function WaveletMatrix(bits)
-        @assert 1 ≤ n ≤ sizeof(T) * 8
+        @assert 1 ≤ n ≤ sizeof(T) * 8 ≤ 64
         @assert length(bits) == n
         nzeros = Int[]
         for bv in bits
@@ -35,14 +35,16 @@ immutable WaveletMatrix{n,T<:Unsigned,B<:AbstractBitVector} <: AbstractVector{T}
     end
 end
 
+const default_bitvector = SucVector
+
 function Base.call{n,T<:Unsigned}(::Type{WaveletMatrix{n}}, data::AbstractVector{T})
-    bits = build(CompactBitVector, data, n)
-    return WaveletMatrix{n,T,CompactBitVector}(bits)
+    bits = build(default_bitvector, data, n)
+    return WaveletMatrix{n,T,default_bitvector}(bits)
 end
 
 function Base.call{T<:Unsigned}(::Type{WaveletMatrix}, data::AbstractVector{T}, n::Integer=sizeof(T) * 8)
-    bits = build(CompactBitVector, data, n)
-    return WaveletMatrix{n,T,CompactBitVector}(bits)
+    bits = build(default_bitvector, data, n)
+    return WaveletMatrix{n,T,default_bitvector}(bits)
 end
 
 length(wm::WaveletMatrix) = length(wm.bits[1])

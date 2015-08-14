@@ -2,12 +2,19 @@ using IntArrays
 
 # build an internal structure of the wavelet matrix
 function build{T<:Unsigned,B}(::Type{B}, data::AbstractVector{T}, n::Int)
-    len = length(data)
-    bits = B[]
     ivec = IntVector{n}(data)
+    bits = B[]
+    _build!(B, ivec, bits, n)
+    return tuple(bits...)
+end
+
+function _build!{B}(::Type{B}, ivec, bits, n)
+    len = length(ivec)
+    # allocate working space
+    bv = BitVector(len)
+    ivec′ = similar(ivec)
     for d in 1:n
         # scan d-th bit
-        bv = BitVector(len)
         nzeros = 0
         for i in 1:len
             if (ivec[i] >> (n - d)) & 1 == 1
@@ -18,7 +25,6 @@ function build{T<:Unsigned,B}(::Type{B}, data::AbstractVector{T}, n::Int)
             end
         end
         # stably sort integers by bv
-        ivec′ = similar(ivec)
         r = nzeros
         l = 0
         for i in 1:len
@@ -30,9 +36,8 @@ function build{T<:Unsigned,B}(::Type{B}, data::AbstractVector{T}, n::Int)
         end
         # store the bit vector and go next
         push!(bits, B(bv))
-        ivec = ivec′
+        copy!(ivec, ivec′)
     end
-    return tuple(bits...)
 end
 
 # starting points for the rank operation can be precomputed
