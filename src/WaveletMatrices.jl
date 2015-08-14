@@ -43,8 +43,7 @@ function Base.call{n,T<:Unsigned}(::Type{WaveletMatrix{n}}, data::AbstractVector
 end
 
 function Base.call{T<:Unsigned}(::Type{WaveletMatrix}, data::AbstractVector{T}, n::Integer=sizeof(T) * 8)
-    bits = build(default_bitvector, data, n)
-    return WaveletMatrix{n,T,default_bitvector}(bits)
+    return WaveletMatrix{n}(data)
 end
 
 length(wm::WaveletMatrix) = length(wm.bits[1])
