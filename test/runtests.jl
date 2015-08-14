@@ -200,6 +200,14 @@ facts("WaveletMatrix") do
         end
     end
 
+    context("destructive") do
+        x = rand(0x00:0x03, 1000)
+        wm = WaveletMatrix{2}(x, destructive=false)
+        @fact length(x) --> 1000
+        wm = WaveletMatrix{2}(x, destructive=true)
+        @fact length(x) --> 0
+    end
+
     context("random") do
         # there is at least one duplicated byte (pigeonhole principle)
         len = typemax(Uint8) + 1

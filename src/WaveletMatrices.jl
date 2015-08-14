@@ -37,8 +37,8 @@ end
 
 const default_bitvector = SucVector
 
-function Base.call{n,T<:Unsigned}(::Type{WaveletMatrix{n}}, data::AbstractVector{T})
-    bits = build(default_bitvector, data, n)
+function Base.call{n,T<:Unsigned}(::Type{WaveletMatrix{n}}, data::AbstractVector{T}; destructive::Bool=false)
+    bits = build(default_bitvector, data, n, destructive)
     return WaveletMatrix{n,T,default_bitvector}(bits)
 end
 

@@ -1,8 +1,12 @@
 using IntArrays
 
 # build an internal structure of the wavelet matrix
-function build{T<:Unsigned,B}(::Type{B}, data::AbstractVector{T}, n::Int)
+function build{T<:Unsigned,B}(::Type{B}, data::AbstractVector{T}, n::Int, destructive::Bool)
     ivec = IntVector{n}(data)
+    if destructive
+        # free memory
+        empty!(data)
+    end
     bits = B[]
     _build!(B, ivec, bits, n)
     return tuple(bits...)
