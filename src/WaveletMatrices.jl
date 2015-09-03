@@ -1,3 +1,5 @@
+isdefined(Base, :__precompile__) && __precompile__()
+
 module WaveletMatrices
 
 export WaveletMatrix, getindex, rank, select, freq
