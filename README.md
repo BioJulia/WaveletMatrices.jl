@@ -10,17 +10,17 @@ unsigned integers that supports some additional operations efficiently.
 The `WaveletMatrix` type is defined as follows:
 
 ```julia
-immutable WaveletMatrix{n,T<:Unsigned,B<:AbstractBitVector} <: AbstractVector{T}
+immutable WaveletMatrix{w,T<:Unsigned,B<:AbstractBitVector} <: AbstractVector{T}
 ```
 
 where
 
-* `n`: the number of bits required to encode the unsigned integers (elements)
+* `w`: the number of bits required to encode the unsigned integers (elements)
 * `T`: the type of elements
 * `B`: the type of bit vectors used to store elements.
 
-To efficiently pack a sequence of unsigned integers, `n` should be as small as possible but enough to encode those integers.
-For example, if you want to store integers between 0x00 and 0x03 (i.e. four types), setting `n = 2 (= ceil(log2(4)))` is the best choice.
+To efficiently pack a sequence of unsigned integers, `w` should be as small as possible but enough to encode those integers.
+For example, if you want to store integers between 0x00 and 0x03 (i.e. four types), setting `w = 2 (= ceil(log2(4)))` is the best choice.
 
 The basic operations available on the wavelet matrix are:
 

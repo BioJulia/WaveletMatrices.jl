@@ -1,27 +1,28 @@
 using IntArrays
 
 # build an internal structure of the wavelet matrix
-function build{T<:Unsigned,B}(::Type{B}, data::AbstractVector{T}, n::Int, destructive::Bool)
-    ivec = IntVector{n}(data)
+function build{T<:Unsigned,B}(::Type{B}, data::AbstractVector{T}, w::Int, destructive::Bool)
+    ivec = IntVector{w}(data)
     if destructive
         # free memory
         empty!(data)
     end
-    bits = B[]
-    _build!(B, ivec, bits, n)
+    bits = Vector{B}(w)
+    _build!(B, ivec, bits)
     return tuple(bits...)
 end
 
-function _build!{B}(::Type{B}, ivec, bits, n)
+function _build!{B}(::Type{B}, ivec, bits)
+    w = length(bits)
     len = length(ivec)
     # allocate working space
     bv = BitVector(len)
     ivec′ = similar(ivec)
-    for d in 1:n
+    for d in 1:w
         # scan d-th bit
         nzeros = 0
         for i in 1:len
-            if (ivec[i] >> (n - d)) & 1 == 1
+            if (ivec[i] >> (w - d)) & 1 == 1
                 bv[i] = true  # right
             else
                 bv[i] = false # left
@@ -39,17 +40,17 @@ function _build!{B}(::Type{B}, ivec, bits, n)
             end
         end
         # store the bit vector and go next
-        push!(bits, B(bv))
+        bits[d] = bv
         copy!(ivec, ivec′)
     end
 end
 
 # starting points for the rank operation can be precomputed
 function locate_sp(a, bits, nzeros)
-    n = length(bits)
+    w = length(bits)
     sp = 0
-    for d in 1:n
-        bit = (a >> (n - d)) & 1 == 1
+    for d in 1:w
+        bit = (a >> (w - d)) & 1 == 1
         sp = rank(bit, bits[d], sp)
         if bit
             sp += nzeros[d]

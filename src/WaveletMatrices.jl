@@ -11,21 +11,33 @@ import IndexableBitVectors: rank
 
 include("build.jl")
 
-immutable WaveletMatrix{n,T<:Unsigned,B<:AbstractBitVector} <: AbstractVector{T}
-    bits::NTuple{n,B}
-    nzeros::NTuple{n,Int}
+"""
+Indexable sequence.
+
+`WaveletMatrix` is a data structure like the wavelet tree, which supports fast rank/select
+queries for a sequence of alphabets. Elements (typed `T`) are encoded in `w` bits and therefore
+a sequence of unsigned integers can be stored in a space-efficient manner if `w` is small.
+The actual memory space is determined according to the underlying bit vector type.
+The default bit vector type is `SucVector`, which requires 5/4 bits per bit, so the total
+size will be about `w * 5/4 * length` bits.
+
+See (Claude et al, 2012, doi:10.1007/978-3-642-34109-0_18) for more details.
+"""
+immutable WaveletMatrix{w,T<:Unsigned,B<:AbstractBitVector} <: AbstractVector{T}
+    bits::NTuple{w,B}
+    nzeros::NTuple{w,Int}
     sps::Vector{Int}
     function WaveletMatrix(bits)
-        @assert 1 ≤ n ≤ sizeof(T) * 8 ≤ 64
-        @assert length(bits) == n
+        @assert 1 ≤ w ≤ sizeof(T) * 8 ≤ 64
+        @assert length(bits) == w
         nzeros = Int[]
         for bv in bits
             @assert length(bits[1]) == length(bv)
             push!(nzeros, rank0(bv, length(bv)))
         end
-        if n ≤ 16
+        if w ≤ 16
             # size of lookup table ≤ 512KiB (= sizeof(Int) * 2^16)
-            alphabetsize = 2^n
+            alphabetsize = 2^w
             sps = Vector{Int}(alphabetsize)
             for a in 0:alphabetsize-1
                 sps[a+1] = locate_sp(T(a), bits, nzeros)
@@ -39,21 +51,21 @@ end
 
 const default_bitvector = SucVector
 
-function Base.call{n,T<:Unsigned}(::Type{WaveletMatrix{n}}, data::AbstractVector{T}; destructive::Bool=false)
-    bits = build(default_bitvector, data, n, destructive)
-    return WaveletMatrix{n,T,default_bitvector}(bits)
+function Base.call{w,T<:Unsigned}(::Type{WaveletMatrix{w}}, data::AbstractVector{T}; destructive::Bool=false)
+    bits = build(default_bitvector, data, w, destructive)
+    return WaveletMatrix{w,T,default_bitvector}(bits)
 end
 
-function Base.call{T<:Unsigned}(::Type{WaveletMatrix}, data::AbstractVector{T}, n::Integer=sizeof(T) * 8)
-    return WaveletMatrix{n}(data)
+function Base.call{T<:Unsigned}(::Type{WaveletMatrix}, data::AbstractVector{T}, w::Integer=sizeof(T) * 8)
+    return WaveletMatrix{w}(data)
 end
 
 length(wm::WaveletMatrix) = length(wm.bits[1])
 size(wm::WaveletMatrix) = (length(wm),)
 
-function sizeof{n}(wm::WaveletMatrix{n})
+function sizeof{w}(wm::WaveletMatrix{w})
     s = 0
-    for d in 1:n
+    for d in 1:w
         s += sizeof(wm.bits[d])
     end
     s += sizeof(wm.nzeros)
@@ -61,16 +73,16 @@ function sizeof{n}(wm::WaveletMatrix{n})
     return s
 end
 
-@inline function getindex{n,T}(wm::WaveletMatrix{n,T}, i::Int)
+@inline function getindex{w,T}(wm::WaveletMatrix{w,T}, i::Int)
     if i < 0 || endof(wm) < i
         throw(BoundsError(i))
     end
     ret = T(0)
-    @inbounds for d in 1:n
+    @inbounds for d in 1:w
         bits = wm.bits[d]
         bit = bits[i]
         ret = ret << 1 | bit
-        if d == n
+        if d == w
             return ret
         end
         if bit
@@ -81,9 +93,9 @@ end
     end
 end
 
-@inline getindex{n,T}(wm::WaveletMatrix{n,T}, i::Integer) = getindex(wm, convert(Int, i))
+@inline getindex{w,T}(wm::WaveletMatrix{w,T}, i::Integer) = getindex(wm, convert(Int, i))
 
-function rank{n}(a::Unsigned, wm::WaveletMatrix{n}, i::Int)
+function rank{w}(a::Unsigned, wm::WaveletMatrix{w}, i::Int)
     if i < 0 || endof(wm) < i
         throw(BoundsError(i))
     elseif i == 0
@@ -93,8 +105,8 @@ function rank{n}(a::Unsigned, wm::WaveletMatrix{n}, i::Int)
         # use precomputed sp
         sp = wm.sps[a+1]
         ep = i
-        @inbounds for d in 1:n
-            bit = (a >> (n - d)) & 1 == 1
+        @inbounds for d in 1:w
+            bit = (a >> (w - d)) & 1 == 1
             ep = rank(bit, wm.bits[d], ep)
             if bit
                 ep += wm.nzeros[d]
@@ -103,8 +115,8 @@ function rank{n}(a::Unsigned, wm::WaveletMatrix{n}, i::Int)
     else
         sp, ep = 0, i
         # scan from the most significant bit to the least significant bit
-        @inbounds for d in 1:n
-            bit = (a >> (n - d)) & 1 == 1
+        @inbounds for d in 1:w
+            bit = (a >> (w - d)) & 1 == 1
             sp = rank(bit, wm.bits[d], sp)
             ep = rank(bit, wm.bits[d], ep)
             if bit
