@@ -1,6 +1,6 @@
 # WaveletMatrices
 
-[![Build Status](https://travis-ci.org/bicycle1885/WaveletMatrices.jl.svg?branch=master)](https://travis-ci.org/bicycle1885/WaveletMatrices.jl)
+[![Build Status](https://travis-ci.org/BioJulia/WaveletMatrices.jl.svg?branch=master)](https://travis-ci.org/BioJulia/WaveletMatrices.jl)
 
 An implementation of "The Wavelet Matrix" (Claude and Navarro) <http://www.dcc.uchile.cl/~gnavarro/ps/spire12.4.pdf>.
 
