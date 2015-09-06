@@ -39,9 +39,3 @@ wm[129]
 rank(0x02, wm, 5555)
 select(0x01, wm, 9876)
 ```
-
-
-## Requirements
-
-* [IndexableBitVectors.jl](https://github.com/bicycle1885/IndexableBitVectors.jl)
-* [IntArrays.jl](https://github.com/bicycle1885/IntArrays.jl)
