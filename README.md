@@ -5,7 +5,7 @@
 An implementation of "The Wavelet Matrix" (Claude and Navarro) <http://www.dcc.uchile.cl/~gnavarro/ps/spire12.4.pdf>.
 
 The wavelet matrix is a data structure to represent an immutable sequence of
-unsigned integers that supports some additional operations efficiently.
+unsigned integers that supports some queries efficiently.
 
 The `WaveletMatrix` type is defined as follows:
 
@@ -20,7 +20,7 @@ where
 * `B`: the type of bit vectors used to store elements.
 
 To efficiently pack a sequence of unsigned integers, `w` should be as small as possible but enough to encode those integers.
-For example, if you want to store integers between 0x00 and 0x03 (i.e. four types), setting `w = 2 (= ceil(log2(4)))` is the best choice.
+For example, if you want to store integers between 0x00 and 0x03 (i.e. four distinct integers), setting `w = 2 (= ceil(log2(4)))` is the best choice.
 
 The basic operations available on the wavelet matrix are:
 
