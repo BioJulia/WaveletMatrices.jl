@@ -31,25 +31,33 @@ facts("WaveletMatrix") do
         @fact wm[4] --> 0x03
         @fact typeof(wm[4]) --> UInt8
         # 0x00
+        @fact rank(0x00, wm, 0) --> 0
         @fact rank(0x00, wm, 1) --> 1
         @fact rank(0x00, wm, 2) --> 1
         @fact rank(0x00, wm, 3) --> 1
         @fact rank(0x00, wm, 4) --> 1
+        @fact rank(0x00, wm, 5) --> 1
         # 0x01
+        @fact rank(0x01, wm, 0) --> 0
         @fact rank(0x01, wm, 1) --> 0
         @fact rank(0x01, wm, 2) --> 1
         @fact rank(0x01, wm, 3) --> 1
         @fact rank(0x01, wm, 4) --> 1
+        @fact rank(0x01, wm, 5) --> 1
         # 0x02
+        @fact rank(0x02, wm, 0) --> 0
         @fact rank(0x02, wm, 1) --> 0
         @fact rank(0x02, wm, 2) --> 0
         @fact rank(0x02, wm, 3) --> 1
         @fact rank(0x02, wm, 4) --> 1
+        @fact rank(0x02, wm, 5) --> 1
         # 0x03
+        @fact rank(0x03, wm, 0) --> 0
         @fact rank(0x03, wm, 1) --> 0
         @fact rank(0x03, wm, 2) --> 0
         @fact rank(0x03, wm, 3) --> 0
         @fact rank(0x03, wm, 4) --> 1
+        @fact rank(0x03, wm, 5) --> 1
 
         @fact select(0x00, wm, 0) --> 0
         @fact select(0x01, wm, 0) --> 0
@@ -85,25 +93,33 @@ facts("WaveletMatrix") do
         @fact wm[3] --> 0x02
         @fact wm[4] --> 0x00
         # 0x00
+        @fact rank(0x00, wm, 0) --> 0
         @fact rank(0x00, wm, 1) --> 0
         @fact rank(0x00, wm, 2) --> 0
         @fact rank(0x00, wm, 3) --> 0
         @fact rank(0x00, wm, 4) --> 1
+        @fact rank(0x00, wm, 5) --> 1
         # 0x01
+        @fact rank(0x01, wm, 0) --> 0
         @fact rank(0x01, wm, 1) --> 1
         @fact rank(0x01, wm, 2) --> 1
         @fact rank(0x01, wm, 3) --> 1
         @fact rank(0x01, wm, 4) --> 1
+        @fact rank(0x01, wm, 5) --> 1
         # 0x02
+        @fact rank(0x02, wm, 0) --> 0
         @fact rank(0x02, wm, 1) --> 0
         @fact rank(0x02, wm, 2) --> 0
         @fact rank(0x02, wm, 3) --> 1
         @fact rank(0x02, wm, 4) --> 1
+        @fact rank(0x02, wm, 5) --> 1
         # 0x03
+        @fact rank(0x03, wm, 0) --> 0
         @fact rank(0x03, wm, 1) --> 0
         @fact rank(0x03, wm, 2) --> 1
         @fact rank(0x03, wm, 3) --> 1
         @fact rank(0x03, wm, 4) --> 1
+        @fact rank(0x03, wm, 5) --> 1
 
         @fact select(0x00, wm, 1) --> 4
         @fact select(0x01, wm, 1) --> 1
@@ -123,10 +139,12 @@ facts("WaveletMatrix") do
         for i in 1:4
             @fact wm[i] --> 0x01
         end
+        @fact rank(0x01, wm, 0) --> 0
         @fact rank(0x01, wm, 1) --> 1
         @fact rank(0x01, wm, 2) --> 2
         @fact rank(0x01, wm, 3) --> 3
         @fact rank(0x01, wm, 4) --> 4
+        @fact rank(0x01, wm, 5) --> 4
 
         @fact select(0x01, wm, 1) --> 1
         @fact select(0x01, wm, 2) --> 2
