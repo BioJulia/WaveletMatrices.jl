@@ -96,10 +96,9 @@ end
 @inline getindex{w,T}(wm::WaveletMatrix{w,T}, i::Integer) = getindex(wm, convert(Int, i))
 
 function rank{w}(a::Unsigned, wm::WaveletMatrix{w}, i::Int)
-    if i ≤ 0
+    i = clamp(i, 0, endof(wm))
+    if i == 0
         return 0
-    elseif i > endof(wm)
-        i = endof(wm)
     end
 
     if !isempty(wm.sps)
