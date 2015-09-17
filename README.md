@@ -1,6 +1,7 @@
 # WaveletMatrices
 
 [![Build Status](https://travis-ci.org/BioJulia/WaveletMatrices.jl.svg?branch=master)](https://travis-ci.org/BioJulia/WaveletMatrices.jl)
+[![WaveletMatrices](http://pkg.julialang.org/badges/WaveletMatrices_0.4.svg)](http://pkg.julialang.org/?pkg=WaveletMatrices&ver=0.4)
 
 An implementation of "The Wavelet Matrix" (Claude and Navarro) <http://www.dcc.uchile.cl/~gnavarro/ps/spire12.4.pdf>.
 
