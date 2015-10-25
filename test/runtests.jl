@@ -228,8 +228,8 @@ facts("WaveletMatrix") do
 
     context("random") do
         # there is at least one duplicated byte (pigeonhole principle)
-        len = typemax(Uint8) + 1
-        bytes = rand(Uint8, len)
+        len = typemax(UInt8) + 1
+        bytes = rand(UInt8, len)
         wm = WaveletMatrix(copy(bytes))
         for i in 1:len
             @fact wm[i] --> bytes[i]
