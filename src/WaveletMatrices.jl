@@ -78,19 +78,22 @@ end
         throw(BoundsError(i))
     end
     ret = T(0)
-    @inbounds for d in 1:w
-        bits = wm.bits[d]
+    @inbounds begin
+        for d in 1:w-1
+            bits = wm.bits[d]
+            bit = bits[i]
+            ret = ret << 1 | bit
+            if bit
+                i = wm.nzeros[d] + rank1(bits, i)
+            else
+                i = rank0(bits, i)
+            end
+        end
+        bits = wm.bits[w]
         bit = bits[i]
         ret = ret << 1 | bit
-        if d == w
-            return ret
-        end
-        if bit
-            i = wm.nzeros[d] + rank1(bits, i)
-        else
-            i = rank0(bits, i)
-        end
     end
+    return ret
 end
 
 @inline getindex{w,T}(wm::WaveletMatrix{w,T}, i::Integer) = getindex(wm, convert(Int, i))
