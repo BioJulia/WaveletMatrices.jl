@@ -96,6 +96,29 @@ end
     return ret
 end
 
+@inline function getindex{w,T}(wm::WaveletMatrix{w,T,SucVector}, i::Int)
+    if i < 0 || endof(wm) < i
+        throw(BoundsError(i))
+    end
+    ret = T(0)
+    @inbounds begin
+        for d in 1:w-1
+            bits = wm.bits[d]
+            bit, rnk1 = IndexableBitVectors.accrank1(bits, i)
+            ret = ret << 1 | bit
+            if bit
+                i = wm.nzeros[d] + rnk1
+            else
+                i = i - rnk1
+            end
+        end
+        bits = wm.bits[w]
+        bit = bits[i]
+        ret = ret << 1 | bit
+    end
+    return ret
+end
+
 @inline getindex{w,T}(wm::WaveletMatrix{w,T}, i::Integer) = getindex(wm, convert(Int, i))
 
 function rank{w}(a::Unsigned, wm::WaveletMatrix{w}, i::Int)
