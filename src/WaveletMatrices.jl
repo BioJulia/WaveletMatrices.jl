@@ -51,12 +51,12 @@ end
 
 const default_bitvector = SucVector
 
-function Base.call{w,T<:Unsigned}(::Type{WaveletMatrix{w}}, data::AbstractVector{T}; destructive::Bool=false)
+@generated function (WaveletMatrix{w}){w,T<:Unsigned}(data::AbstractVector{T}; destructive::Bool=false)
     bits = build(default_bitvector, data, w, destructive)
     return WaveletMatrix{w,T,default_bitvector}(bits)
 end
 
-function Base.call{T<:Unsigned}(::Type{WaveletMatrix}, data::AbstractVector{T}, w::Integer=sizeof(T) * 8)
+@generated function (WaveletMatrix){T<:Unsigned}(data::AbstractVector{T}, w::Integer=sizeof(T) * 8)
     return WaveletMatrix{w}(data)
 end
 
