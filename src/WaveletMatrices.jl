@@ -27,7 +27,7 @@ struct WaveletMatrix{w,T,B} <: AbstractVector{T} where {w,T<:Unsigned,B<:Abstrac
     bits::NTuple{w,B}
     nzeros::NTuple{w,Int}
     sps::Vector{Int}
-    function WaveletMatrix(bits)
+    function WaveletMatrix{w,T,B}(bits) where {w,T<:Unsigned,B<:AbstractBitVector}
         @assert 1 ≤ w ≤ sizeof(T) * 8 ≤ 64
         @assert length(bits) == w
         nzeros = Int[]
