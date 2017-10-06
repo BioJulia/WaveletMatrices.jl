@@ -4,7 +4,7 @@ module WaveletMatrices
 
 export WaveletMatrix, getindex, rank, select, freq
 
-import Base: endof, length, size, sizeof, getindex, select
+import Base: endof, length, size, sizeof, select
 
 using IndexableBitVectors
 import IndexableBitVectors: rank
@@ -57,7 +57,7 @@ const default_bitvector = SucVector
 end
 
 @generated function (WaveletMatrix){T<:Unsigned}(data::AbstractVector{T}, w::Integer=sizeof(T) * 8)
-    return WaveletMatrix{w}(data)
+    return WaveletMatrix{w,T,default_bitvector}(data)
 end
 
 length(wm::WaveletMatrix) = length(wm.bits[1])
@@ -73,7 +73,7 @@ function sizeof{w}(wm::WaveletMatrix{w})
     return s
 end
 
-@inline function getindex{w,T}(wm::WaveletMatrix{w,T}, i::Int)
+@inline function Base.getindex{w,T}(wm::WaveletMatrix{w,T}, i::Int)
     if i < 0 || endof(wm) < i
         throw(BoundsError(i))
     end
@@ -96,7 +96,7 @@ end
     return ret
 end
 
-@inline function getindex{w,T}(wm::WaveletMatrix{w,T,SucVector}, i::Int)
+@inline function Base.getindex{w,T}(wm::WaveletMatrix{w,T,SucVector}, i::Int)
     if i < 0 || endof(wm) < i
         throw(BoundsError(i))
     end
@@ -119,7 +119,7 @@ end
     return ret
 end
 
-@inline getindex{w,T}(wm::WaveletMatrix{w,T}, i::Integer) = getindex(wm, convert(Int, i))
+@inline Base.getindex{w,T}(wm::WaveletMatrix{w,T}, i::Integer) = getindex(wm, convert(Int, i))
 
 function rank{w}(a::Unsigned, wm::WaveletMatrix{w}, i::Int)
     i = clamp(i, 0, endof(wm))
