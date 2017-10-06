@@ -47,18 +47,16 @@ struct WaveletMatrix{w,T<:Unsigned,B<:AbstractBitVector} <: AbstractVector{T}
         end
         return new(tuple(bits...), tuple(nzeros...), sps)
     end
+    function WaveletMatrix{w}(data::AbstractVector{T}; destructive::Bool=false) where {w, T<:Unsigned}
+       bits = build(default_bitvector, data, w, destructive)
+       return WaveletMatrix{w,T,default_bitvector}(bits)
+    end
+    function WaveletMatrix(data::AbstractVector{T}, w::Integer=sizeof(T) * 8) where {T <: Unsigned}
+       return WaveletMatrix{w}(data)
+    end
 end
 
 const default_bitvector = SucVector
-
-@generated function (WaveletMatrix{w}){w,T<:Unsigned}(data::AbstractVector{T}; destructive::Bool=false)
-    bits = build(default_bitvector, data, w, destructive)
-    return WaveletMatrix{w,T,default_bitvector}(bits)
-end
-
-@generated function (WaveletMatrix){T<:Unsigned}(data::AbstractVector{T}, w::Integer=sizeof(T) * 8)
-    return WaveletMatrix{w,T,default_bitvector}(data)
-end
 
 length(wm::WaveletMatrix) = length(wm.bits[1])
 size(wm::WaveletMatrix) = (length(wm),)
