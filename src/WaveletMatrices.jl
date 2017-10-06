@@ -23,7 +23,7 @@ size will be about `w * 5/4 * length` bits.
 
 See (Claude et al, 2012, doi:10.1007/978-3-642-34109-0_18) for more details.
 """
-struct WaveletMatrix{w,T<:Unsigned,B<:AbstractBitVector} <: AbstractVector{T}
+struct WaveletMatrix{w,T,B} <: AbstractVector{T} where {w,T<:Unsigned,B<:AbstractBitVector}
     bits::NTuple{w,B}
     nzeros::NTuple{w,Int}
     sps::Vector{Int}
