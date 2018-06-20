@@ -1,4 +1,5 @@
-isdefined(Base, :__precompile__) && __precompile__()
+__precompile__()
+
 
 module WaveletMatrices
 
@@ -61,7 +62,7 @@ const default_bitvector = SucVector
 length(wm::WaveletMatrix) = length(wm.bits[1])
 size(wm::WaveletMatrix) = (length(wm),)
 
-function sizeof{w}(wm::WaveletMatrix{w})
+function sizeof(wm::WaveletMatrix{w}) where w
     s = 0
     for d in 1:w
         s += sizeof(wm.bits[d])
@@ -71,7 +72,7 @@ function sizeof{w}(wm::WaveletMatrix{w})
     return s
 end
 
-@inline function Base.getindex{w,T}(wm::WaveletMatrix{w,T}, i::Int)
+@inline function Base.getindex(wm::WaveletMatrix{w,T}, i::Int) where {w,T}
     if i < 0 || endof(wm) < i
         throw(BoundsError(i))
     end
@@ -94,7 +95,7 @@ end
     return ret
 end
 
-@inline function Base.getindex{w,T}(wm::WaveletMatrix{w,T,SucVector}, i::Int)
+@inline function Base.getindex(wm::WaveletMatrix{w,T,SucVector}, i::Int) where {w,T}
     if i < 0 || endof(wm) < i
         throw(BoundsError(i))
     end
@@ -117,9 +118,9 @@ end
     return ret
 end
 
-@inline Base.getindex{w,T}(wm::WaveletMatrix{w,T}, i::Integer) = getindex(wm, convert(Int, i))
+@inline Base.getindex(wm::WaveletMatrix{w,T}, i::Integer) where {w,T} = getindex(wm, convert(Int, i))
 
-function rank{w}(a::Unsigned, wm::WaveletMatrix{w}, i::Int)
+function rank(a::Unsigned, wm::WaveletMatrix{w}, i::Int) where w
     i = clamp(i, 0, endof(wm))
     if i == 0
         return 0
