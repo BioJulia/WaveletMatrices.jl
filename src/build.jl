@@ -1,7 +1,7 @@
 using IntArrays
 
 # build an internal structure of the wavelet matrix
-function build{T<:Unsigned,B}(::Type{B}, data::AbstractVector{T}, w::Int, destructive::Bool)
+function build(::Type{B}, data::AbstractVector{T}, w::Int, destructive::Bool) where {T<:Unsigned,B}
     ivec = IntVector{w}(data)
     if destructive
         # free memory
@@ -12,7 +12,7 @@ function build{T<:Unsigned,B}(::Type{B}, data::AbstractVector{T}, w::Int, destru
     return tuple(bits...)
 end
 
-function _build!{B}(::Type{B}, ivec, bits)
+function _build!(::Type{B}, ivec, bits) where B
     w = length(bits)
     len = length(ivec)
     # allocate working space
