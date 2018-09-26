@@ -38,5 +38,5 @@ wm = WaveletMatrix{2}(data)
 
 wm[129]
 rank(0x02, wm, 5555)
-select(0x01, wm, 9876)
+partialsort(0x01, wm, 9876)
 ```
