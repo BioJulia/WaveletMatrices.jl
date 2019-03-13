@@ -7,7 +7,7 @@ function build(::Type{B}, data::AbstractVector{T}, w::Int, destructive::Bool) wh
         # free memory
         empty!(data)
     end
-    bits = Vector{B}(w)
+    bits = Vector{B}(undef,w)
     _build!(B, ivec, bits)
     return tuple(bits...)
 end
@@ -16,7 +16,7 @@ function _build!(::Type{B}, ivec, bits) where B
     w = length(bits)
     len = length(ivec)
     # allocate working space
-    bv = BitVector(len)
+    bv = BitVector(undef, len)
     ivec′ = similar(ivec)
     for d in 1:w
         # scan d-th bit
