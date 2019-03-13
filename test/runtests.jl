@@ -176,7 +176,7 @@ end
         ]
         wm = WaveletMatrix(x)
         @test length(wm) == 10
-        for i in 1:endof(x)
+        for i in 1:lastindex(x)
             @test wm[i] == x[i]
         end
         @test typeof(wm[1]) == UInt64
@@ -192,7 +192,7 @@ end
         x = rand(0x00:0x03, 100)
         wm = WaveletMatrix{2}(x)
         @test length(wm) == 100
-        for i in 1:endof(x)
+        for i in 1:lastindex(x)
             @test wm[i] == x[i]
         end
         for a in 0x00:0x03, i in 1:100
@@ -207,7 +207,7 @@ end
         x = rand(0x00000000:0x00000011, 500)
         wm = WaveletMatrix{17}(x)
         @test length(wm) == 500
-        for i in 1:endof(x)
+        for i in 1:lastindex(x)
             @test wm[i] == x[i]
         end
         for a in 0x00000000:0x00000011, i in 1:500
