@@ -5,7 +5,7 @@ module WaveletMatrices
 
 export WaveletMatrix, getindex, rank, select, freq
 
-import Base: endof, length, size, sizeof, select
+import Base: lastindex, length, size, sizeof, select
 
 using IndexableBitVectors
 import IndexableBitVectors: rank
@@ -73,7 +73,7 @@ function sizeof(wm::WaveletMatrix{w}) where w
 end
 
 @inline function Base.getindex(wm::WaveletMatrix{w,T}, i::Int) where {w,T}
-    if i < 0 || endof(wm) < i
+    if i < 0 || lastindex(wm) < i
         throw(BoundsError(i))
     end
     ret = T(0)
@@ -96,7 +96,7 @@ end
 end
 
 @inline function Base.getindex(wm::WaveletMatrix{w,T,SucVector}, i::Int) where {w,T}
-    if i < 0 || endof(wm) < i
+    if i < 0 || lastindex(wm) < i
         throw(BoundsError(i))
     end
     ret = T(0)
@@ -121,7 +121,7 @@ end
 @inline Base.getindex(wm::WaveletMatrix{w,T}, i::Integer) where {w,T} = getindex(wm, convert(Int, i))
 
 function rank(a::Unsigned, wm::WaveletMatrix{w}, i::Int) where w
-    i = clamp(i, 0, endof(wm))
+    i = clamp(i, 0, lastindex(wm))
     if i == 0
         return 0
     end
