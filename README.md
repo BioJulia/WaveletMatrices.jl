@@ -11,7 +11,7 @@ unsigned integers that supports some queries efficiently.
 The `WaveletMatrix` type is defined as follows:
 
 ```julia
-immutable WaveletMatrix{w,T<:Unsigned,B<:AbstractBitVector} <: AbstractVector{T}
+struct WaveletMatrix{w,T<:Unsigned,B<:AbstractBitVector} <: AbstractVector{T}
 ```
 
 where
