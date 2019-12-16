@@ -1,7 +1,9 @@
 # WaveletMatrices
 
 [![Build Status](https://travis-ci.org/BioJulia/WaveletMatrices.jl.svg?branch=master)](https://travis-ci.org/BioJulia/WaveletMatrices.jl)
-[![WaveletMatrices](http://pkg.julialang.org/badges/WaveletMatrices_0.4.svg)](http://pkg.julialang.org/?pkg=WaveletMatrices&ver=0.4)
+[![GitHub latest release](https://img.shields.io/badge/latest-v0.2.0-blue)](https://github.com/BioJulia/WaveletMatrices.jl)
+[![GitHub latest release](https://img.shields.io/badge/stable-v0.2.0-green)](https://github.com/BioJulia/WaveletMatrices.jl/releases)
+[![Julia versions](https://img.shields.io/badge/julia-1.0+-blue)](https://julialang.org/)
 
 An implementation of "The Wavelet Matrix" (Claude and Navarro) <http://www.dcc.uchile.cl/~gnavarro/ps/spire12.4.pdf>.
 

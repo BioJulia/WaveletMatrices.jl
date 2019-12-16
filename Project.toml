@@ -1,0 +1,10 @@
+name = "WaveletMatrices"
+uuid = "c0580c95-5bac-53b2-8f35-dbbbc8487a1f"
+version = "0.2.0"
+
+[deps]
+IndexableBitVectors = "1cb3b9ac-1ffd-5777-9e6b-a3d42300664d"
+IntArrays = "45d23951-e9a5-545c-8049-e4c4887f5525"
+
+[compat]
+julia = "1.0"
