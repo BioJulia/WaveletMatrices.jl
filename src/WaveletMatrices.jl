@@ -5,7 +5,7 @@ module WaveletMatrices
 
 export WaveletMatrix, getindex, rank, select, freq
 
-import Base: lastindex, length, size, sizeof, select
+import Base: lastindex, length, size, sizeof
 
 using IndexableBitVectors
 import IndexableBitVectors: rank
